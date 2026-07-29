@@ -3,4 +3,7 @@ node_modules/
 *.db
 *.db-journal
 
-generated/git status
+.claude/
+.agents/
+.windsurf/
+skills-lock.json
