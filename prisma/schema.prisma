@@ -14,3 +14,11 @@ model Favorite {
   rating    Float
   year      Int
 }
+
+model Watchlist {
+  id     Int    @id
+  title  String
+  image  String?
+  rating Float?
+  year   Int?
+}
