@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import favoriteRoutes from "./routes/favoriteRoutes.js";
+import watchlistRoutes from "./routes/watchlistRoutes.js";
 
 const app = express();
 
@@ -12,5 +13,6 @@ app.get("/", (req, res) => {
 });
 
 app.use("/favorites", favoriteRoutes);
+app.use("/watchlist", watchlistRoutes);
 
 export default app;
