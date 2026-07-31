@@ -21,4 +21,13 @@ model Watchlist {
   image  String?
   rating Float?
   year   Int?
+} 
+
+model History {
+  id        Int      @id
+  title     String
+  image     String?
+  rating    Float?
+  year      Int?
+  viewedAt  DateTime @default(now())
 }
