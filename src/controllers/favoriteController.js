@@ -11,7 +11,7 @@ export async function getAllFavorites(req, res) {
 }
 
 export async function addFavorite(req, res) {
-  const { id, title, image, rating, year } = req.body;
+  const { id, title, image, rating, year, genreIds } = req.body;
 
   if (!id || !title) {
     return res.status(400).json({ message: "Data film tidak lengkap" });
@@ -25,6 +25,7 @@ export async function addFavorite(req, res) {
         image,
         rating: rating != null ? Number(rating) : null,
         year: year != null ? Number(year) : null,
+        genreIds: Array.isArray(genreIds) ? genreIds : [],
       },
     });
 
