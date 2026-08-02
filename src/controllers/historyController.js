@@ -40,7 +40,7 @@ export async function addHistory(req, res) {
 
       return res.json(updatedHistory);
     }
-    
+
     const createdHistory = await prisma.history.create({
       data: {
         id,
@@ -60,3 +60,17 @@ export async function addHistory(req, res) {
     });
   }
 }
+
+  export async function deleteAllHistory(req, res) {
+    try {
+      await prisma.history.deleteMany();
+
+      return res.status(204).send();
+    } catch (error) {
+      console.error(error);
+
+      return res.status(500).json({
+        message: "Terjadi kesalahan pada server",
+      });
+    }
+  }
