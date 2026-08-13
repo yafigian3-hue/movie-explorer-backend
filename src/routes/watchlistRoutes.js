@@ -4,11 +4,12 @@ import {
   addWatchlist,
   removeWatchlist,
 } from "../controllers/watchlistController.js";
+import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = Router();
 
-router.get("/", getAllWatchlists);
-router.post("/", addWatchlist);
-router.delete("/:id", removeWatchlist);
+router.get("/", authMiddleware, getAllWatchlists);
+router.post("/", authMiddleware, addWatchlist);
+router.delete("/:id", authMiddleware, removeWatchlist);
 
 export default router;

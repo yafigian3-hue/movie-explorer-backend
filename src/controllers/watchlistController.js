@@ -2,11 +2,19 @@ import prisma from "../lib/prisma.js";
 
 export async function getAllWatchlists(req, res) {
   try {
-    const watchlists = await prisma.watchlist.findMany();
+    const watchlists = await prisma.watchlist.findMany({
+      where: {
+        userId: req.user.userId,
+      },
+    });
 
     res.json(watchlists);
   } catch (error) {
-    res.status(500).json({ message: "Gagal mengambil data watchlist" });
+    console.error(error);
+
+    res.status(500).json({
+      message: "Gagal mengambil data watchlist",
+    });
   }
 }
 
@@ -14,18 +22,36 @@ export async function addWatchlist(req, res) {
   const { id, title, image, rating, year, genreIds } = req.body;
 
   if (!id || !title) {
-    return res.status(400).json({ message: "Data film tidak lengkap" });
+    return res.status(400).json({
+      message: "Data film tidak lengkap",
+    });
   }
 
   try {
+    const existingWatchlist = await prisma.watchlist.findUnique({
+      where: {
+        userId_movieId: {
+          userId: req.user.userId,
+          movieId: id,
+        },
+      },
+    });
+
+    if (existingWatchlist) {
+      return res.status(409).json({
+        message: "Film sudah ada di watchlist",
+      });
+    }
+
     const newWatchlist = await prisma.watchlist.create({
       data: {
-        id,
+        movieId: id,
         title,
         image,
         rating: rating != null ? Number(rating) : null,
         year: year != null ? Number(year) : null,
         genreIds: Array.isArray(genreIds) ? genreIds : [],
+        userId: req.user.userId,
       },
     });
 
@@ -40,11 +66,16 @@ export async function addWatchlist(req, res) {
 }
 
 export async function removeWatchlist(req, res) {
-  const id = Number(req.params.id);
+  const movieId = Number(req.params.id);
 
   try {
     const watchlist = await prisma.watchlist.findUnique({
-      where: { id },
+      where: {
+        userId_movieId: {
+          userId: req.user.userId,
+          movieId,
+        },
+      },
     });
 
     if (!watchlist) {
@@ -54,7 +85,12 @@ export async function removeWatchlist(req, res) {
     }
 
     await prisma.watchlist.delete({
-      where: { id },
+      where: {
+        userId_movieId: {
+          userId: req.user.userId,
+          movieId,
+        },
+      },
     });
 
     res.json({
@@ -62,6 +98,8 @@ export async function removeWatchlist(req, res) {
       deleted: watchlist,
     });
   } catch (error) {
+    console.error(error);
+
     res.status(500).json({
       message: "Gagal menghapus watchlist",
     });
