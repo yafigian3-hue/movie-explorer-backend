@@ -4,7 +4,7 @@ export async function getAllFavorites(req, res) {
   try {
     const favorites = await prisma.favorite.findMany({
       where: {
-        userId: req.user.id,
+        userId: req.user.userId,
       },
     });
 
@@ -28,6 +28,21 @@ export async function addFavorite(req, res) {
   }
 
   try {
+    const existingFavorite = await prisma.favorite.findUnique({
+      where: {
+        userId_movieId: {
+          userId: req.user.userId,
+          movieId: id,
+        },
+      },
+    });
+
+    if (existingFavorite) {
+      return res.status(409).json({
+        message: "Film sudah ada di favorite",
+      });
+    }
+
     const newFavorite = await prisma.favorite.create({
       data: {
         movieId: id,
@@ -36,7 +51,7 @@ export async function addFavorite(req, res) {
         rating: rating != null ? Number(rating) : null,
         year: year != null ? Number(year) : null,
         genreIds: Array.isArray(genreIds) ? genreIds : [],
-        userId: req.user.id,
+        userId: req.user.userId,
       },
     });
 
@@ -57,7 +72,7 @@ export async function removeFavorite(req, res) {
     const favorite = await prisma.favorite.findUnique({
       where: {
         userId_movieId: {
-          userId: req.user.id,
+          userId: req.user.userId,
           movieId,
         },
       },
@@ -72,7 +87,7 @@ export async function removeFavorite(req, res) {
     await prisma.favorite.delete({
       where: {
         userId_movieId: {
-          userId: req.user.id,
+          userId: req.user.userId,
           movieId,
         },
       },
