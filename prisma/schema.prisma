@@ -7,30 +7,59 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model User {
+  id        Int        @id @default(autoincrement())
+  email     String     @unique
+  password  String
+  createdAt DateTime   @default(now())
+
+  favorites Favorite[]
+  watchlist Watchlist[]
+  history   History[]
+}
+
 model Favorite {
-  id        Int    @id
+  id        Int      @id @default(autoincrement())
+  movieId   Int
   title     String
   image     String
   rating    Float
   year      Int
-  genreIds Int[]    @default([])
+  genreIds  Int[]    @default([])
+
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, movieId])
 }
 
 model Watchlist {
-  id     Int    @id
-  title  String
-  image  String?
-  rating Float?
-  year   Int?
-  genreIds Int[]    @default([])
-} 
+  id        Int      @id @default(autoincrement())
+  movieId   Int
+  title     String
+  image     String?
+  rating    Float?
+  year      Int?
+  genreIds  Int[]    @default([])
+
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, movieId])
+}
 
 model History {
-  id        Int      @id
+  id        Int      @id @default(autoincrement())
+  movieId   Int
   title     String
   image     String?
   rating    Float?
   year      Int?
   viewedAt  DateTime @default(now())
-  genreIds Int[]    @default([])
+  genreIds  Int[]    @default([])
+
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, movieId])
 }
