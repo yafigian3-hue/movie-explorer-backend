@@ -4,11 +4,12 @@ import {
   addHistory,
   deleteAllHistory,
 } from "../controllers/historyController.js";
+import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.get("/", getAllHistory);
-router.post("/", addHistory);
-router.delete("/", deleteAllHistory);
+router.get("/", authMiddleware, getAllHistory);
+router.post("/", authMiddleware, addHistory);
+router.delete("/", authMiddleware, deleteAllHistory);
 
 export default router;
