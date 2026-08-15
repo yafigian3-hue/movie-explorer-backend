@@ -3,11 +3,11 @@ import prisma from "../lib/prisma.js";
 import jwt from "jsonwebtoken";
 
 export async function register(req, res) {
-  const { email, password } = req.body;
+  const { name, email, password } = req.body;
 
-  if (!email || !password) {
+  if (!name || !email || !password) {
     return res.status(400).json({
-      message: "Email dan password wajib diisi",
+      message: "Nama, email, dan password wajib diisi",
     });
   }
 
@@ -26,6 +26,7 @@ export async function register(req, res) {
 
     const user = await prisma.user.create({
       data: {
+        name,
         email,
         password: hashedPassword,
       },
@@ -33,6 +34,7 @@ export async function register(req, res) {
 
     return res.status(201).json({
       id: user.id,
+      name: user.name,
       email: user.email,
     });
   } catch (error) {
@@ -88,6 +90,7 @@ export async function login(req, res) {
       token,
       user: {
         id: user.id,
+        name: user.name,
         email: user.email,
       },
     });
