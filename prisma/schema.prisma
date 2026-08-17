@@ -1,66 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
-}
-
 model User {
-  id        Int        @id @default(autoincrement())
-  name      String     @default("Pengguna")
-  email     String     @unique
+  id        Int         @id @default(autoincrement())
+  email     String      @unique
   password  String
-  createdAt DateTime   @default(now())
-
+  createdAt DateTime    @default(now())
+  name      String      @default("Pengguna")
   favorites Favorite[]
-  watchlist Watchlist[]
   history   History[]
+  watchlist Watchlist[]
 }
 
 model Favorite {
-  id        Int      @id @default(autoincrement())
-  movieId   Int
-  title     String
-  image     String
-  rating    Float
-  year      Int
-  genreIds  Int[]    @default([])
-
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id       Int    @id @default(autoincrement())
+  title    String
+  image    String
+  rating   Float
+  year     Int
+  genreIds Int[]  @default([])
+  movieId  Int
+  userId   Int
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, movieId])
 }
 
 model Watchlist {
-  id        Int      @id @default(autoincrement())
-  movieId   Int
-  title     String
-  image     String?
-  rating    Float?
-  year      Int?
-  genreIds  Int[]    @default([])
-
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id       Int     @id @default(autoincrement())
+  title    String
+  image    String?
+  rating   Float?
+  year     Int?
+  genreIds Int[]   @default([])
+  movieId  Int
+  userId   Int
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, movieId])
 }
 
 model History {
-  id        Int      @id @default(autoincrement())
-  movieId   Int
-  title     String
-  image     String?
-  rating    Float?
-  year      Int?
-  viewedAt  DateTime @default(now())
-  genreIds  Int[]    @default([])
-
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id       Int      @id @default(autoincrement())
+  title    String
+  image    String?
+  rating   Float?
+  year     Int?
+  viewedAt DateTime @default(now())
+  genreIds Int[]    @default([])
+  movieId  Int
+  userId   Int
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, movieId])
 }
